@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: xylo-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - XYLO_SECRET_KEY=supersecretkey
+      - XYLO_ADMIN_PASSWORD=admin123
+      - OLLAMA_HOST=http://ollama:11434
+      - PIPER_HOST=piper
+      - PIPER_PORT=10200
+      - PIPER_VOICE=en_US-libritts-high
+    volumes:
+      - ./data/backend:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ollama
+      - piper
+
+  frontend:
+    build: ./frontend
+    container_name: xylo-frontend
+    environment:
+      - NEXT_PUBLIC_API_BASE=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: xylo-ollama
+    volumes:
+      - ./data/ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+  piper:
+    image: rhasspy/wyoming-piper:latest
+    container_name: xylo-piper
+    environment:
+      - PIPER_VOICE=en_US-libritts-high
+    ports:
+      - "10200:10200"
+    restart: unless-stopped

@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+requests
+aiohttp
+duckduckgo-search
+beautifulsoup4
+sqlalchemy
+passlib[bcrypt]
+python-jose
